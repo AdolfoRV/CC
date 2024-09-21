@@ -4,3 +4,6 @@
 [submodule "metodologias/cc5905"]
 	path = metodologias/cc5905
 	url = https://github.com/Bigelazo/cc5905
+[submodule "metodologias/faq"]
+	path = metodologias/faq
+	url = https://github.com/dcc-cc3002/faq
