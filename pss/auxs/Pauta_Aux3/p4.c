@@ -4,6 +4,7 @@
 char mas_repetido(char *s);
 
 int main(int argc, char **argv) {
+  printf("size: %lu\n", sizeof(int));
   // ejemplos
   // mas_repetido("aaabbbb") = "b"
   // mas_repetido("abbcccc") = "c"
@@ -11,8 +12,8 @@ int main(int argc, char **argv) {
   // mas_repetido("anitalavalatina") = "a"
   
   if (argc != 2) {
-    printf("uso: %s <palabra>\n", argv[0]);
-    printf("ej: %s aaabbbb\n", argv[0]);
+    printf("uso: <palabra>\n");
+    printf("ej: aaabbbb\n");
     return -1;
   }
 
