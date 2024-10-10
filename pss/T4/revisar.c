@@ -115,6 +115,7 @@ void libera_abb(Nodo *pnodo, Map *pos2nodo) {
 }
 
 int main(int argc, char **argv) {
+    // char *nom= "defs.dicc";
     if (argc!=2) {
         fprintf(stderr, "uso: ./revivar <archivo>\n");
         exit(1);
