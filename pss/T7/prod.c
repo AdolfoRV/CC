@@ -4,10 +4,81 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "prod.h"
 
 BigNum *parArrayProd(int a[], int i, int j, int p) {
+    if (p == 1) {
+        return seqArrayProd(a, i, j);
+    }
+
+    if (i == j) {
+        return smallNum(a[i]);
+    }
+
+    int h = (i + j) / 2;
+    int fds[2];
+
+    if (pipe(fds) == -1) {
+        perror("Error al crear el pipe");
+        exit(EXIT_FAILURE);
+    }
+
+    pid_t pid = fork();
+
+    if (pid == -1) {
+        perror("Error al crear el proceso");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pid == 0) { // Proceso hijo
+        close(fds[0]);
+
+        BigNum *left = parArrayProd(a, i, h, p / 2);
+
+        if (write(fds[1], &left->n, sizeof(int)) != sizeof(int)) {
+            perror("Error al escribir tamaño del BigNum");
+            exit(EXIT_FAILURE);
+        }
+
+        if (write(fds[1], left->bits, left->n * sizeof(BigInt_t)) != left->n * sizeof(BigInt_t)) {
+            perror("Error al escribir datos del BigNum");
+            exit(EXIT_FAILURE);
+        }
+
+        freeBigNum(left);
+        close(fds[1]);
+        exit(EXIT_SUCCESS);
+    } else { // Proceso padre
+        close(fds[1]);
+
+        BigNum *right = parArrayProd(a, h + 1, j, p - p / 2);
+
+        BigNum *left = malloc(sizeof(BigNum));
+        if (leer(fds[0], &left->n, sizeof(int)) != 0) {
+            perror("Error al leer tamaño del BigNum");
+            exit(EXIT_FAILURE);
+        }
+
+        left->bits = malloc(left->n * sizeof(BigInt_t));
+        if (leer(fds[0], left->bits, left->n * sizeof(BigInt_t)) != 0) {
+            perror("Error al leer datos del BigNum");
+            exit(EXIT_FAILURE);
+        }
+
+        close(fds[0]);
+        wait(NULL);
+
+        BigNum *prod = bigMul(left, right);
+
+        freeBigNum(left);
+        freeBigNum(right);
+
+        return prod;
+    }
+}
+
+
+//BigNum *parArrayProd(int a[], int i, int j, int p) {
   // Programe aca una version paralela del producto de los enteros
   // de un arreglo desde los indices i al j, usando p procesos pesados.
 
@@ -37,8 +108,8 @@ BigNum *parArrayProd(int a[], int i, int j, int p) {
   //     leer(fds[0], b->bits, b->n*sizeof(BigInt_t));
 
   // Esto compila y pasa make run-valgrind, pero no pasa run-O ni run-g
-  return seqArrayProd(a, i, j);
-}
+  //return seqArrayProd(a, i, j);
+//}
 
 // El valor del producto puede exceder el limite de representacion
 // de los enteros y reales de C.  Asi es que se usan enteros de tamano
