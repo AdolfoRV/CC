@@ -176,8 +176,8 @@ st.dataframe(df_salaries, use_container_width=True)
 
 @st.cache_data
 def load_data():
-    df_postings = pd.read_csv("postings.csv", encoding="UTF-8", engine="python")
-    df_companies = pd.read_csv("company_details/companies.csv", encoding="UTF-8", engine="python")
+    df_postings = pd.read_csv("bases_de_datos/Proyecto/postings.csv", encoding="UTF-8", engine="python")
+    df_companies = pd.read_csv("bases_de_datos/Proyecto/company_details/companies.csv", encoding="UTF-8", engine="python")
     return {
         "postings": df_postings,
         "companies": df_companies,
